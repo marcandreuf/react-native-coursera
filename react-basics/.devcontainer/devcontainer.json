@@ -1,0 +1,21 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/debian
+{
+	"name": "Debian",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"remoteUser": "node",
+	"containerUser": "node",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"expo.vscode-expo-tools",
+				"msjsdiag.vscode-react-native",
+				"mhutchie.git-graph",
+				"rodrigovallades.es7-react-js-snippets"
+			]
+		}
+	}	
+}

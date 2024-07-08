@@ -80,6 +80,15 @@ export async function saveMenuItems(menuItems) {
  */
 export async function filterByQueryAndCategories(query, activeCategories) {
   return new Promise((resolve, reject) => {
-    resolve(SECTION_LIST_MOCK_DATA);
+    console.log('Query: ', query);
+    db.transaction((tx) => {
+      const sqlQuery = `select * from menuitems where title like ? ` +
+        `AND category IN (${activeCategories.map(() => '?')})`;
+      //console.log('Sql query:' + sqlQuery);
+      tx.executeSql(sqlQuery, [`%${query}%`, ...activeCategories],
+        (_, { rows }) => { resolve(rows._array); },
+        reject
+      );
+    })
   });
 }

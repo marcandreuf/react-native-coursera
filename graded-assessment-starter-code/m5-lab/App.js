@@ -85,11 +85,12 @@ export default function App() {
         if (menuItems.length === 0) {
           const fetchedMenuItems = await fetchData();
           await saveMenuItems(fetchedMenuItems);
-          menuItems = fetchedMenuItems;
+          menuItems = await getMenuItems();
         }
 
         console.log('Menu items fetched: ', menuItems.length);
         const sectionListData = getSectionListData(menuItems);
+        console.log('Section List Data: ', sectionListData.length);
         setData(sectionListData);
       } catch (e) {
         Alert.alert(e.message);
@@ -99,6 +100,7 @@ export default function App() {
 
   useUpdateEffect(() => {
     (async () => {
+      console.log('Search Bar Text: '+searchBarText);
       const activeCategories = sections.filter((s, i) => {
         // If all filters are deselected, all categories are active
         if (filterSelections.every((item) => item === false)) {
@@ -110,11 +112,18 @@ export default function App() {
         const menuItems = await filterByQueryAndCategories(
           query,
           activeCategories
-        );
+        ).then((dbmenuItems) => {
+          console.log('Menu items filtered from DB', dbmenuItems.length);
+          return dbmenuItems;
+        }).catch((e) => {
+          console.log('Error filtering menu items', e);
+        });       
+        
         const sectionListData = getSectionListData(menuItems);
         setData(sectionListData);
       } catch (e) {
-        Alert.alert(e.message);
+        console.log('Error fetching menu items', e);
+        Alert.alert('Error Message: '+e.message);
       }
     })();
   }, [filterSelections, query]);

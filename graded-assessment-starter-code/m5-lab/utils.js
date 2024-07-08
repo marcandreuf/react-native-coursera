@@ -47,29 +47,24 @@ export function getSectionListData(data) {
   //return SECTION_LIST_MOCK_DATA;
   const sectionData = [];
 
-  console.log('Data: ', data.length);
-
+  // console.log('Data: ', data);
   data.forEach(element => {
     let categoryItem = sectionData.find((item) => item.title === element.category);
 
     if (categoryItem === undefined) {
-      //console.log('Create new section: ', element.category);
-      let cat = {
+      categoryItem = {
         title: element.category,
         data: [],
-      };
-      categoryItem = cat;
+      };      
+      sectionData.push(categoryItem);
     }
-    //console.log('Add item menu to category: ', element.category);
     categoryItem.data.push({
       id: element.id,
       uuid: element.uuid,
       title: element.title,
       price: element.price,
     });
-    sectionData.push(categoryItem);
   });
-  //console.log('Section list: ', JSON.stringify(sectionData));
   return sectionData;
 }
 

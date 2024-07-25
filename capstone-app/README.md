@@ -52,5 +52,7 @@ Join our community of developers creating universal apps.
 
 # TODOs:
 
-Continue: https://www.coursera.org/learn/capstone-react-app/supplement/himHG/recap-principles-of-ux-ui
+Continue at Design Components: https://www.coursera.org/learn/capstone-react-app/supplement/xBbew/exercise-designing-components
+
+
 

@@ -52,7 +52,8 @@ Join our community of developers creating universal apps.
 
 # TODOs:
 
-Continue at Design Components: https://www.coursera.org/learn/capstone-react-app/supplement/xBbew/exercise-designing-components
+- [ ] Create MR and link the MR to the blog post.
+- [ ] Write a blog post on how to remove expo-router and use react-navigation for the coursera exercises of Module 2.
 
 
 

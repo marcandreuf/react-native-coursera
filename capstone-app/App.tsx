@@ -1,6 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Onboarding from './app/screens/Onboarding';
+import OnboardingScreen from './app/screens/OnboardingScreen';
 
 
 
@@ -10,7 +10,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Onboarding">
-        <Stack.Screen name="Onboarding" component={Onboarding} />
+        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

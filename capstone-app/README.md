@@ -50,10 +50,6 @@ Join our community of developers creating universal apps.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
 
 
-# TODOs:
-
-- [ ] Create MR and link the MR to the blog post.
-- [ ] Write a blog post on how to remove expo-router and use react-navigation for the coursera exercises of Module 2.
 
 
 

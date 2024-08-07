@@ -1,5 +1,6 @@
 import { View, StyleSheet, Text, Platform, TextInput, Pressable } from 'react-native';
 import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function RegistrationForm() {
     const [firstName, setFirstName] = useState('');
@@ -11,7 +12,7 @@ export default function RegistrationForm() {
     }, [firstName, email]);
 
     function updateIsValidForm() {
-        if(checkValidForm()) {
+        if (checkValidForm()) {
             setIsValidForm(true);
         } else {
             setIsValidForm(false);
@@ -19,12 +20,12 @@ export default function RegistrationForm() {
     }
 
     function checkValidForm() {
-        console.log(`firstname: '${firstName}', email: '${email}'`);
+        //console.log(`firstname: '${firstName}', email: '${email}'`);
         const isNameValid = firstName.trim().length > 0;
-        console.log("isNameValid: ", isNameValid);
-        const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);        
+        //console.log("isNameValid: ", isNameValid);
+        const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
         const isvalid = isNameValid && isEmailValid;
-        console.log("isvalid: ", isvalid);
+        //console.log("isvalid: ", isvalid);
         return isvalid;
     }
 
@@ -53,9 +54,16 @@ export default function RegistrationForm() {
             <Pressable
                 style={!isValidForm ? styles.buttonDisabled : styles.button}
                 disabled={!isValidForm}
-                onPress={() => {
-                    console.log(
-                        'First name: ', firstName, ', email: ', email);
+                onPress={async () => {
+                    console.log('First name: ', firstName, ', email: ', email);
+                    try {
+                        await AsyncStorage.setItem('email', email);
+                        console.log(`email ${email} stored`);
+                    } catch (error) {
+                        console.log('Error saving email: ', error);
+                    }
+                    setFirstName('');
+                    setEmail('');
                 }}>
                 <Text style={styles.buttonText}>
                     Next

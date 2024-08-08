@@ -2,7 +2,7 @@ import { View, StyleSheet, Text, Platform, TextInput, Pressable } from 'react-na
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function RegistrationForm() {
+export default function RegistrationForm({navigation}) {
     const [firstName, setFirstName] = useState('');
     const [email, setEmail] = useState('');
     const [isValidForm, setIsValidForm] = useState(false);
@@ -55,15 +55,20 @@ export default function RegistrationForm() {
                 style={!isValidForm ? styles.buttonDisabled : styles.button}
                 disabled={!isValidForm}
                 onPress={async () => {
-                    console.log('First name: ', firstName, ', email: ', email);
+                    const userData = {
+                        firstName: firstName,
+                        email: email
+                    };
+                    console.log('data: ', userData);                    
                     try {
-                        await AsyncStorage.setItem('email', email);
-                        console.log(`email ${email} stored`);
+                        await AsyncStorage.setItem('userData', JSON.stringify(userData));
+                        console.log(`Stored user data ${userData}.`);
                     } catch (error) {
                         console.log('Error saving email: ', error);
                     }
                     setFirstName('');
                     setEmail('');
+                    navigation.navigate('Profile');
                 }}>
                 <Text style={styles.buttonText}>
                     Next

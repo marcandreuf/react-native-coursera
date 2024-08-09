@@ -8,7 +8,7 @@ const Checkbox = ({ isChecked, onPress, label }) => {
       <MaterialCommunityIcons
         name={isChecked ? 'checkbox-marked' : 'checkbox-blank-outline'}
         size={24}
-        color="black"
+        color= '#0b5b10'
       />
       <Text style={styles.label}>{label}</Text>
     </Pressable>

@@ -8,7 +8,7 @@ const ProfileHeader = () => {
     const goBackButton = () => {
         if (navigation.canGoBack()) {
             navigation.goBack();
-        }else{
+        } else {
             console.log('Cannot go back');
         }
     };
@@ -16,11 +16,9 @@ const ProfileHeader = () => {
     return (
         <View style={styles.headerContainer}>
             <View>
-                {navigation.canGoBack() && (
-                    <TouchableOpacity onPress={() => goBackButton()}>
-                        <Image source={require('../imgs/back-arrow.png')} style={styles.icon} />
-                    </TouchableOpacity>
-                )}
+                <TouchableOpacity onPress={() => goBackButton()}>
+                    <Image source={require('../imgs/back-arrow.png')} style={styles.icon} />
+                </TouchableOpacity>
             </View>
 
             <View style={styles.centerContainer}>
@@ -45,10 +43,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     icon: {
-        width: 40,
-        height: 40,
+        width: 30,
+        height: 30,
         alignSelf: 'center',
-        backgroundColor: 142814,
+        backgroundColor: '#0b5b10',
         borderRadius: 50,
     },
     profile: {

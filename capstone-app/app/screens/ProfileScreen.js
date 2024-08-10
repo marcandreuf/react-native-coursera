@@ -3,10 +3,10 @@ import { KeyboardAvoidingView, StyleSheet } from 'react-native'
 import LittleLemonHeader from '../components/LittleLemonHeader';
 import ProfileForm from '../components/ProfileForm';
 
-export default function ProfileScreen({navigation}) {
+export default function ProfileScreen() {
     return (
         <KeyboardAvoidingView style={styles.container}>            
-            <ProfileForm navigation={navigation} />
+            <ProfileForm />
         </KeyboardAvoidingView>
     )
 }

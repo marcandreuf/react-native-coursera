@@ -1,12 +1,15 @@
 import { ScrollView, View, StyleSheet, Text, Image, TextInput, Pressable } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Checkbox from './Checkbox';
 import { MaskedTextInput } from 'react-native-mask-text';
 import * as ImagePicker from 'expo-image-picker';
 import InitialsIcon from './InitialsIcon';
+import AuthContext from '../contexts/AuthContext.js';
 
-export default function ProfileForm({ navigation }) {
+export default function ProfileForm() {
+
+   const { dispatch } = useContext(AuthContext);
 
    const [image, setImage] = useState(null);
    const [firstName, setFirstName] = useState('');
@@ -79,12 +82,11 @@ export default function ProfileForm({ navigation }) {
       }
    }
 
-   const logOutBtn = async () => {
-      return
+   const logOutBtn = async () => {      
       try {
          await AsyncStorage.clear();
          console.log('Storage cleared');
-         navigation.navigate('Onboarding');
+         dispatch({ type: 'userLoggedOut'});
       } catch (error) {
          console.log('Error cleaning storage: ', error);
       }
@@ -175,7 +177,7 @@ export default function ProfileForm({ navigation }) {
             />
          </View>
          <Pressable style={styles.logoutButton}
-            onPress={logOutBtn()}>
+            onPress={logOutBtn}>
             <Text style={styles.logoutButtonText}>Log out</Text>
          </Pressable>
          <View style={styles.actionButtonsContainer}>
@@ -184,7 +186,7 @@ export default function ProfileForm({ navigation }) {
                <Text style={styles.removeButtonText}>Discard changes</Text>
             </Pressable>
             <Pressable style={styles.saveButton}
-               onPress={() => saveChanges()}>
+               onPress={saveChanges}>
                <Text style={styles.saveButtonText}>Save changes</Text>
             </Pressable>
          </View>

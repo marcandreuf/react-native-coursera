@@ -1,11 +1,14 @@
 import { View, StyleSheet, Text, Platform, TextInput, Pressable } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AuthContext from '../contexts/AuthContext';
 
-export default function RegistrationForm({navigation}) {
+export default function RegistrationForm() {
     const [firstName, setFirstName] = useState('');
     const [email, setEmail] = useState('');
     const [isValidForm, setIsValidForm] = useState(false);
+
+    const { dispatch } = useContext(AuthContext);
 
     useEffect(() => {
         updateIsValidForm();
@@ -28,6 +31,23 @@ export default function RegistrationForm({navigation}) {
         //console.log("isvalid: ", isvalid);
         return isvalid;
     }
+
+    const nextBtn = async () => {
+        const userData = {
+            firstName: firstName,
+            email: email
+        };
+        console.log('data: ', userData);                    
+        try {
+            await AsyncStorage.setItem('userData', JSON.stringify(userData));
+            console.log(`Stored user data ${userData}.`);
+        } catch (error) {
+            console.log('Error saving email: ', error);
+        }
+        setFirstName('');
+        setEmail('');
+        dispatch({ type: 'userRegisteredComplete'});                    
+    };
 
     return (
         <View
@@ -54,22 +74,7 @@ export default function RegistrationForm({navigation}) {
             <Pressable
                 style={!isValidForm ? styles.buttonDisabled : styles.button}
                 disabled={!isValidForm}
-                onPress={async () => {
-                    const userData = {
-                        firstName: firstName,
-                        email: email
-                    };
-                    console.log('data: ', userData);                    
-                    try {
-                        await AsyncStorage.setItem('userData', JSON.stringify(userData));
-                        console.log(`Stored user data ${userData}.`);
-                    } catch (error) {
-                        console.log('Error saving email: ', error);
-                    }
-                    setFirstName('');
-                    setEmail('');
-                    navigation.navigate('Profile');
-                }}>
+                onPress={nextBtn}>
                 <Text style={styles.buttonText}>
                     Next
                 </Text>

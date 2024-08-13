@@ -52,17 +52,6 @@ export default function ProfileForm() {
       }
    }
 
-   function getUserInitials(firstName, lastName) {
-      let initials = '';
-      if (firstName !== undefined && firstName.length !== 0) {
-         initials = firstName.toUpperCase().charAt(0);
-      }
-      if( lastName !== undefined && lastName.length !== 0) {
-         return initials + lastName.toUpperCase().charAt(0);
-      }
-      return initials;
-   }
-
    const saveChanges = async () => {
       try {
          const userData = {
@@ -320,5 +309,16 @@ const styles = StyleSheet.create({
       fontSize: 18,
    }
 });
+
+export function getUserInitials(firstName, lastName) {
+   let initials = '';
+   if (firstName !== undefined && firstName.length !== 0) {
+      initials = firstName.toUpperCase().charAt(0);
+   }
+   if( lastName !== undefined && lastName.length !== 0) {
+      return initials + lastName.toUpperCase().charAt(0);
+   }
+   return initials;
+}
 
 

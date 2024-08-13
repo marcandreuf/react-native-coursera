@@ -23,6 +23,9 @@
     },
     "web": {
       "favicon": "./app/imgs/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }

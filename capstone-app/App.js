@@ -9,6 +9,7 @@ import SplashScreen from './app/screens/SplashScreen';
 import ProfileHeader from './app/components/ProfileHeader';
 import HomeScreen from './app/screens/HomeScreen';
 import AuthContext from "./app/contexts/AuthContext";
+import { useFonts } from 'expo-font';
 
 const Stack = createNativeStackNavigator();
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -63,17 +64,29 @@ export default function App() {
   useEffect(() => {
     console.log('App.js useEffect');
     fetchIsRegistered().then((isRegistered) => {
-      if(isRegistered) {
-        dispatch({ type: 'userRegisteredComplete'});
-      }else{
-        dispatch({ type: 'loadingComplete'});
+      if (isRegistered) {
+        dispatch({ type: 'userRegisteredComplete' });
+      } else {
+        dispatch({ type: 'loadingComplete' });
       }
     }).catch((error) => {
       console.log('Error fetching is registered: ', error);
     })
   }, []);
 
-  if (authState.isLoading) {
+
+  // Loading fonts
+  const [fontsLoaded] = useFonts({
+    "Karla-Regular": require("./app/assets/fonts/Karla-Regular.ttf"),
+    "Karla-Medium": require("./app/assets/fonts/Karla-Medium.ttf"),
+    "Karla-Bold": require("./app/assets/fonts/Karla-Bold.ttf"),
+    "Karla-ExtraBold": require("./app/assets/fonts/Karla-ExtraBold.ttf"),
+    "MarkaziText-Regular": require("./app/assets/fonts/MarkaziText-Regular.ttf"),
+    "MarkaziText-Medium": require("./app/assets/fonts/MarkaziText-Medium.ttf"),
+  });
+
+
+  if (!fontsLoaded || authState.isLoading) {
     return <SplashScreen />
   }
 
@@ -83,11 +96,11 @@ export default function App() {
         <Stack.Navigator>
           {authState.isUserRegistered ? (
             <>
-              <Stack.Screen name="Profile" component={ProfileScreen}
+              <Stack.Screen name="Home" component={HomeScreen}
                 options={{
                   headerTitle: (props) => <ProfileHeader {...props} />,
                 }} />
-              <Stack.Screen name="Home" component={HomeScreen}
+              <Stack.Screen name="Profile" component={ProfileScreen}
                 options={{
                   headerTitle: (props) => <ProfileHeader {...props} />,
                 }} />

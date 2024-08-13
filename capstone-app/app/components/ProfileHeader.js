@@ -1,33 +1,46 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { getUserInitials } from './ProfileForm';
+import InitialsIcon from './InitialsIcon';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const ProfileHeader = () => {
     const navigation = useNavigation();
+    const [profileImage, setProfileImage] = useState(null);
+    const [profileInitials, setProfileInitials] = useState(null);
 
-    const goBackButton = () => {
-        if (navigation.canGoBack()) {
-            navigation.goBack();
-        } else {
-            console.log('Cannot go back');
+    const loadProfile = async () => {
+        try {
+            const userData = await AsyncStorage.getItem('userData');
+            const data = JSON.parse(userData);
+            const fname = data?.firstName;
+            const lname = data?.lastName;
+            setProfileInitials(getUserInitials(fname, lname));
+            setProfileImage(data?.image);
+        } catch (error) {
+            console.log('Error loading user data: ', error);
         }
-    };
+    }    
+    
+    useEffect(() => {
+        loadProfile()           
+    }, []);
 
     return (
         <View style={styles.headerContainer}>
-            <View>
-                <TouchableOpacity onPress={() => goBackButton()}>
-                    <Image source={require('../imgs/back-arrow.png')} style={styles.icon} />
-                </TouchableOpacity>
-            </View>
-
             <View style={styles.centerContainer}>
                 <Image source={require('../imgs/Logo.png')} style={styles.logo} />
             </View>
 
             <View>
                 <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-                    <Image source={require('../imgs/Profile.png')} style={styles.profile} />
+                    {profileImage ? (
+                        <Image source={{ uri: profileImage }} style={styles.profile} />
+                    ) : (
+                        <InitialsIcon initials={profileInitials} size={60} />
+                    )}                    
                 </TouchableOpacity>
             </View>
         </View>
@@ -36,7 +49,7 @@ const ProfileHeader = () => {
 
 const styles = StyleSheet.create({
     headerContainer: {
-        flex: 1,
+        flex: 0.95,
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         height: 80,
@@ -53,17 +66,17 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         alignSelf: 'center',
-        marginRight: 20,
+        marginLeft: 10,
     },
     logo: {
         height: 50,
-        width: 300,
+        width: 250,
         resizeMode: 'contain',
         alignSelf: 'center',
 
     },
     centerContainer: {
-        flex: 0.8,
+        flex: 0.6,
         alignItems: 'center',
         justifyContent: 'center',
     }

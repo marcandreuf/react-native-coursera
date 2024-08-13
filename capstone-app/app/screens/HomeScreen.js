@@ -1,8 +1,9 @@
-import React, { useEffect, useCallback, useMemo } from 'react';
+import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import debounce from 'lodash.debounce';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import { useNoInitialEffect } from '../lib/useNoInitialEffect';
+import MenuFilter from '../components/MenuFilter';
 
 const MENU_DATA_URL = "https://raw.githubusercontent.com/" +
     "Meta-Mobile-Developer-PC/Working-With-Data-API/main/capstone.json";
@@ -10,6 +11,7 @@ const MENU_DATA_URL = "https://raw.githubusercontent.com/" +
 const MENU_DATA_IMG_URL = "https://github.com/Meta-Mobile-Developer-PC/" +
     "Working-With-Data-API/blob/main/images/${imageFileName}?raw=true";
 
+const menuSections = ["starters", "mains", "desserts"];
 
 const fetchMenuData = async () => {
     try {
@@ -30,8 +32,8 @@ const fetchMenuData = async () => {
 };
 
 export default function HomeScreen() {
-    const [searchBarText, setSearchBarText] = React.useState('');
-    const [searchQuery, setSearchQuery] = React.useState('');
+    const [searchBarText, setSearchBarText] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
 
     // Entry point for the home screen. 
     useEffect(() => {
@@ -61,6 +63,18 @@ export default function HomeScreen() {
         setSearchBarText(text);
         debouncedSetQuery(text);
     };
+
+    // Filter functionality
+    const [filterMenuSelections, setFilterSelections] = useState(
+        menuSections.map(() => false)
+    );
+    const handleFiltersChange = async (index) => {
+        const arrayCopy = [...filterMenuSelections];
+        arrayCopy[index] = !filterMenuSelections[index];
+        console.log('Filter selections: ', arrayCopy);
+        setFilterSelections(arrayCopy);
+    };
+
 
 
     return (
@@ -95,6 +109,12 @@ export default function HomeScreen() {
             </View>
             <View style={styles.menuSection}>
                 <Text style={styles.menuHeader}>ORDER FOR DELIVERY!</Text>
+                <MenuFilter
+                    selections={filterMenuSelections}
+                    onChange={handleFiltersChange}
+                    sections={menuSections}
+                />
+                
             </View>
         </View>
     );
@@ -152,7 +172,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "column",
         backgroundColor: "#fff",
-        padding: 15,
+        width: "100%",
     },
     menuHeader: {
         fontSize: 20,

@@ -1,15 +1,13 @@
 import React, { useEffect, useCallback, useMemo, useState } from 'react';
 import debounce from 'lodash.debounce';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, FlatList } from 'react-native';
 import { Searchbar } from 'react-native-paper';
 import { useNoInitialEffect } from '../lib/useNoInitialEffect';
 import MenuFilter from '../components/MenuFilter';
+import MenuItem from '../components/MenuItem';
 
 const MENU_DATA_URL = "https://raw.githubusercontent.com/" +
     "Meta-Mobile-Developer-PC/Working-With-Data-API/main/capstone.json";
-
-const MENU_DATA_IMG_URL = "https://github.com/Meta-Mobile-Developer-PC/" +
-    "Working-With-Data-API/blob/main/images/${imageFileName}?raw=true";
 
 const menuSections = ["starters", "mains", "desserts"];
 
@@ -34,11 +32,13 @@ const fetchMenuData = async () => {
 export default function HomeScreen() {
     const [searchBarText, setSearchBarText] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
+    const [menuData, setMenuData] = useState([]);
 
     // Entry point for the home screen. 
     useEffect(() => {
         fetchMenuData().then(menu => {
             console.log(menu);
+            setMenuData(menu);
         });
     }, []);
 
@@ -74,6 +74,14 @@ export default function HomeScreen() {
         console.log('Filter selections: ', arrayCopy);
         setFilterSelections(arrayCopy);
     };
+
+    // Filter menu data
+
+
+
+    
+
+
 
 
 
@@ -114,7 +122,11 @@ export default function HomeScreen() {
                     onChange={handleFiltersChange}
                     sections={menuSections}
                 />
-                
+                <FlatList
+                    data={menuData}
+                    renderItem={({ item }) => <MenuItem item={item}/>}
+                    keyExtractor={(item) => item.id}
+                />
             </View>
         </View>
     );
@@ -173,6 +185,7 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         backgroundColor: "#fff",
         width: "100%",
+        padding: 15,
     },
     menuHeader: {
         fontSize: 20,

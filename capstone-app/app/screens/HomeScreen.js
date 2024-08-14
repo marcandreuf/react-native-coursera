@@ -5,6 +5,7 @@ import { Searchbar } from 'react-native-paper';
 import { useNoInitialEffect } from '../lib/useNoInitialEffect';
 import MenuFilter from '../components/MenuFilter';
 import MenuItem from '../components/MenuItem';
+import { openDatabase, createMenuItemsTable, getAllMenuItems, saveAllMenuItems } from '../lib/LocalDB';
 
 const MENU_DATA_URL = "https://raw.githubusercontent.com/" +
     "Meta-Mobile-Developer-PC/Working-With-Data-API/main/capstone.json";
@@ -13,6 +14,7 @@ const menuSections = ["starters", "mains", "desserts"];
 
 const fetchMenuData = async () => {
     try {
+        console.log('Fetching menu data ...')
         const response = await fetch(MENU_DATA_URL);
         const json = await response.json();
         const menu = json.menu.map((item, index) => ({
@@ -23,6 +25,7 @@ const fetchMenuData = async () => {
             image: item.image,
             category: item.category,
         }));
+        console.log('fetchMenuData: ', menu);
         return menu;
     } catch (error) {
         console.error(error);
@@ -36,10 +39,23 @@ export default function HomeScreen() {
 
     // Entry point for the home screen. 
     useEffect(() => {
-        fetchMenuData().then(menu => {
-            console.log(menu);
-            setMenuData(menu);
-        });
+        (async () => {
+            let menuItems = [];
+            try{
+                await openDatabase();
+                await createMenuItemsTable();
+                menuItems = await getAllMenuItems();
+                console.log('MenuItems: ', menuItems);
+                if (menuItems.length == 0){
+                    menuItems = await fetchMenuData();
+                    console.log('Fetched MenuItems: ', menuItems);
+                    await saveAllMenuItems(menuItems);
+                }
+                setMenuData(menuItems);
+            }catch(e) {
+                console.log('Loading Home Error: ', e)
+            }
+        })();
     }, []);
 
     useNoInitialEffect(() => {

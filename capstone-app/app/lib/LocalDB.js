@@ -1,5 +1,11 @@
 import * as SQLite from 'expo-sqlite';
 
+/**
+ * DB operations layer using the latest Expo SQL docs with async.
+ * https://docs.expo.dev/versions/latest/sdk/sqlite/#basic-crud-operations 
+ */
+
+
 let db = null;
 
 export const openDatabase = async() => {
@@ -13,7 +19,6 @@ export const createMenuItemsTable = async() => {
   const query = "CREATE TABLE IF NOT EXISTS menuitems " +
     "(id integer primary key not null, name text, price text, " +
     "description text, image text, category text)";
-  //console.log('Create query: ', query);
 
   await db.runAsync(query);
   const listTables = await db.getFirstAsync("SELECT name FROM sqlite_master WHERE type='table';")

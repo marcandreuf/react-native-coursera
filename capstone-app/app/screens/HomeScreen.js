@@ -5,12 +5,15 @@ import { Searchbar } from 'react-native-paper';
 import { useNoInitialEffect } from '../lib/useNoInitialEffect';
 import MenuFilter from '../components/MenuFilter';
 import MenuItem from '../components/MenuItem';
-import { openDatabase, createMenuItemsTable, getAllMenuItems, saveAllMenuItems } from '../lib/LocalDB';
+import {
+    openDatabase, createMenuItemsTable, getAllMenuItems,
+    saveAllMenuItems, filterByQueryAndCategories
+} from '../lib/LocalDB';
 
 const MENU_DATA_URL = "https://raw.githubusercontent.com/" +
     "Meta-Mobile-Developer-PC/Working-With-Data-API/main/capstone.json";
 
-const menuSections = ["starters", "mains", "desserts"];
+const menuSections = ["Starters", "Mains", "Desserts", "Salads", "Drinks"];
 
 const fetchMenuData = async () => {
     try {
@@ -24,8 +27,7 @@ const fetchMenuData = async () => {
             description: item.description,
             image: item.image,
             category: item.category,
-        }));
-        console.log('fetchMenuData: ', menu);
+        }));        
         return menu;
     } catch (error) {
         console.error(error);
@@ -36,23 +38,24 @@ export default function HomeScreen() {
     const [searchBarText, setSearchBarText] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [menuData, setMenuData] = useState([]);
+    const [filterMenuSelections, setFilterSelections] = useState(
+        menuSections.map(() => false)
+    );
 
     // Entry point for the home screen. 
     useEffect(() => {
         (async () => {
             let menuItems = [];
-            try{
+            try {
                 await openDatabase();
                 await createMenuItemsTable();
-                menuItems = await getAllMenuItems();
-                console.log('MenuItems: ', menuItems);
-                if (menuItems.length == 0){
-                    menuItems = await fetchMenuData();
-                    console.log('Fetched MenuItems: ', menuItems);
+                menuItems = await getAllMenuItems();                
+                if (menuItems.length == 0) {
+                    menuItems = await fetchMenuData();                    
                     await saveAllMenuItems(menuItems);
                 }
                 setMenuData(menuItems);
-            }catch(e) {
+            } catch (e) {
                 console.log('Loading Home Error: ', e)
             }
         })();
@@ -61,15 +64,19 @@ export default function HomeScreen() {
     useNoInitialEffect(() => {
         (async () => {
             try {
-                console.log(`Search query is: ${searchQuery}`);
+                let activatedCategories = [...menuSections];
+                const isAnyFilterActivated = filterMenuSelections.filter(v => v).length !== 0;
+                if (isAnyFilterActivated)
+                    activatedCategories = menuSections.filter((s, i) => filterMenuSelections[i]);
+                const filteredMenuItems = await filterByQueryAndCategories(searchQuery,
+                    activatedCategories);
+                setMenuData(filteredMenuItems);
             } catch (e) {
-                Alert.alert(e.message);
+                console.log('Error filter search:, e ');
             }
         })();
-    }, [searchQuery]);
+    }, [filterMenuSelections, searchQuery]);
 
-
-    // Search bar functionality
     const setQueryTerm = useCallback((searchTerm) => {
         setSearchQuery(searchTerm);
 
@@ -80,26 +87,12 @@ export default function HomeScreen() {
         debouncedSetQuery(text);
     };
 
-    // Filter functionality
-    const [filterMenuSelections, setFilterSelections] = useState(
-        menuSections.map(() => false)
-    );
     const handleFiltersChange = async (index) => {
         const arrayCopy = [...filterMenuSelections];
-        arrayCopy[index] = !filterMenuSelections[index];
-        console.log('Filter selections: ', arrayCopy);
+        arrayCopy[index] = !filterMenuSelections[index];        
         setFilterSelections(arrayCopy);
+
     };
-
-    // Filter menu data
-
-
-
-    
-
-
-
-
 
     return (
         <View style={styles.container}>
@@ -140,7 +133,7 @@ export default function HomeScreen() {
                 />
                 <FlatList
                     data={menuData}
-                    renderItem={({ item }) => <MenuItem item={item}/>}
+                    renderItem={({ item }) => <MenuItem item={item} />}
                     keyExtractor={(item) => item.id}
                 />
             </View>
